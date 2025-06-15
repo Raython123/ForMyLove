@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>For You</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      background: #f78da7;
+      font-family: monospace;
+    }
+
+    body {
+      background-color: #f78da7;
+      background-image: repeating-linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0.2) 0,
+        rgba(255, 255, 255, 0.2) 2px,
+        transparent 2px,
+        transparent 10px
+      ),
+      repeating-linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.2) 0,
+        rgba(255, 255, 255, 0.2) 2px,
+        transparent 2px,
+        transparent 10px
+      );
+      position: relative;
+    }
+
+    /* Overlay the I love you text */
+    #bg-text {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 200%;
+      height: 200%;
+      font-size: 16px;
+      color: #ffd6e0;
+      opacity: 0.4;
+      white-space: pre;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 40px,
+        #f78da7 40px,
+        #f78da7 42px
+      );
+      animation: scrollText 30s linear infinite;
+      z-index: 0;
+    }
+
+    @keyframes scrollText {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(-25%, -25%); }
+    }
+
+    #pixel, #heart {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+    }
+
+    #pixel {
+      width: 16px;
+      height: 16px;
+      background: #e60026;
+    }
+
+    #heart {
+      display: none;
+      width: 96px;
+      height: 84px;
+      background: transparent;
+      animation: beat 1s infinite;
+    }
+
+    .block {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background-color: #e60026;
+    }
+
+    @keyframes beat {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.15); }
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div id="bg-text">
+    <!-- Lots of repeated 'I love you' text to create the pattern -->
+    I love you I love you I love you I love you I love you I love you I love you I love you I love you I love you I love you I love you I love you I love you I love you I love you I love you I love you I love you I love you I love you I love you I love you I love you I love you I love you I love you I love you I love you I love you I love you I love you I love you I love you I love you I love you I love you I love you I love you I love you 
+  </div>
+
+  <div id="pixel"></div>
+  <div id="heart"></div>
+
+  <script>
+    const pixel = document.getElementById('pixel');
+    const heart = document.getElementById('heart');
+
+    let angle = 0;
+    let radius = Math.min(window.innerWidth, window.innerHeight) / 2.2;
+    let speed = 0.05;
+    let interval;
+
+    function movePixel() {
+      angle += speed;
+      radius *= 0.99;
+      speed *= 1.02;
+
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+
+      const x = centerX + radius * Math.cos(angle);
+      const y = centerY + radius * Math.sin(angle);
+
+      pixel.style.left = `${x}px`;
+      pixel.style.top = `${y}px`;
+
+      if (radius < 10) {
+        clearInterval(interval);
+        pixel.style.animation = 'blink 0.5s steps(2, start) 4';
+
+        setTimeout(() => {
+          pixel.style.display = 'none';
+          showHeart(centerX, centerY);
+        }, 1000);
+      }
+    }
+
+    function showHeart(centerX, centerY) {
+      heart.style.display = 'block';
+      heart.style.left = `${centerX}px`;
+      heart.style.top = `${centerY}px`;
+
+      const heartPixels = [
+        [1, 0], [2, 0], [4, 0], [5, 0],
+        [0, 1], [3, 1], [6, 1],
+        [0, 2], [6, 2],
+        [1, 3], [5, 3],
+        [2, 4], [4, 4],
+        [3, 5],
+      ];
+
+      for (const [x, y] of heartPixels) {
+        const block = document.createElement('div');
+        block.className = 'block';
+        block.style.left = `${x * 12}px`;
+        block.style.top = `${y * 12}px`;
+        heart.appendChild(block);
+      }
+    }
+
+    interval = setInterval(movePixel, 16);
+  </script>
+</body>
+</html>
